@@ -1,0 +1,1 @@
+void read28pio(unsigned short buffer, unsigned int,unsigned char,unsigned char slavebit);

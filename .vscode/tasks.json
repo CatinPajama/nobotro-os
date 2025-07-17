@@ -4,7 +4,7 @@
     {
       "label": "Build OS Image",
       "type": "shell",
-      "command": "cd kernel && make",
+      "command": "make",
       "args": [],
       "group": {
         "kind": "build",
@@ -15,7 +15,7 @@
     {
       "label": "Run QEMU",
       "type": "shell",
-      "command": "echo 'QEMU started'; qemu-system-i386 -drive format=raw,file=${workspaceFolder}/nobotro_os.img -s -S -serial mon:stdio",
+      "command": "echo 'QEMU started' && qemu-system-i386 -drive file=${workspaceFolder}/nobotro_os.img,format=raw -s -S -serial mon:stdio",
       "dependsOn": ["Build OS Image"],
       "isBackground": true,
       "problemMatcher": [
