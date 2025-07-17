@@ -1,15 +1,40 @@
 {
-    "version": "2.0.0",
-    "tasks": [
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build OS Image",
+      "type": "shell",
+      "command": "cd kernel && make",
+      "args": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Run QEMU",
+      "type": "shell",
+      "command": "echo 'QEMU started'; qemu-system-i386 -drive format=raw,file=${workspaceFolder}/nobotro_os.img -s -S -serial mon:stdio",
+      "dependsOn": ["Build OS Image"],
+      "isBackground": true,
+      "problemMatcher": [
         {
-            "label": "Build kernel and Run in qemu",
-            "type": "shell",
-            "command": "cd kernel && make all && make emu",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
             }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".",
+            "endsPattern": "QEMU started"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
