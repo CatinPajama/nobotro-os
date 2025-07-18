@@ -14,6 +14,7 @@ all:
 	ld -m elf_i386 -T link.ld -o kernel.elf kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o
 	ld -m elf_i386 -T link.ld -o kernel.bin kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o --oformat binary
 	cat bootloader.bin kernel.bin > ./nobotro_os.img
+	truncate -s 10240 nobotro_os.img
 	rm *.bin *.o
 
 debug: ../nobotro_os.img

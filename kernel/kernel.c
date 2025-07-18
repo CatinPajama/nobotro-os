@@ -57,8 +57,11 @@ void main()
 {
 
 	clear_screen();
-	unsigned short buffer[256];
-	read28pio(buffer,0,1,0);
+	unsigned short buffer1[256],buffer2[256];
+	buffer1[0] = 'h';
+	buffer1[1] = 'i';
+	write28pio(buffer1,18,1,0);
+	read28pio(buffer2,18,1,0);
 	while (1)
 	{
 		char buf[20];

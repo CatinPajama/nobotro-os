@@ -51,7 +51,7 @@ mov es, ax      ; ES = 0
 mov bx, 0x1000  ; BX = 0x1000. ES:BX=0x0:0x1000 
                 ; ES:BX = starting address to read sector(s) into
 mov ah, 02      ; Int 13h/AH=2 = Read Sectors From Drive
-mov al, 15   ; Sectors to read = 15
+mov al, 20   ; Sectors to read = 15
 mov ch, 00      ; CH=Cylinder. Second sector of disk
                 ; is at Cylinder 0 not 1
 mov cl, 02      ; Sector to read = 2
