@@ -46,7 +46,8 @@ void cache_flush() {
 
 
 void write28pio(unsigned short *buffer, unsigned int LBA, unsigned char sectorCount, unsigned char slavebit) {
-    wait();
+    // wait();
+    while (inb(0x1F7) & 0x80);
     outb(0x1F6, 0xE0 | (slavebit << 4) | ((LBA >> 24) & 0x0F));
     outb(0x1F1, 0x00);
     outb(0x1F2, (unsigned char) sectorCount);
