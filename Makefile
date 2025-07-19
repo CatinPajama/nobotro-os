@@ -1,33 +1,47 @@
 CFLAGS = -g -ffreestanding -fno-stack-protector -fno-pie -m32 -Iinclude -Wno-int-conversion -Wno-implicit-function-declaration
+BUILD_DIR=build
+IMAGE=nobotro_os.img
 
-all:
-	nasm -f bin ./boot/bootloader.asm -o bootloader.bin
-	gcc $(CFLAGS) -c ./util/port.c -o port.o
-	gcc $(CFLAGS) -c ./kernel/kernel.c -o kernel.o
-	gcc $(CFLAGS) -c ./lib/stdio.c -o stdio.o
-	gcc $(CFLAGS) -c ./lib/stdlib.c -o stdlib.o
-	gcc $(CFLAGS) -c ./lib/string.c -o string.o
-	gcc $(CFLAGS) -c ./drivers/video.c -o video.o
-	gcc $(CFLAGS) -c ./drivers/disk.c -o disk.o
-	gcc $(CFLAGS) -c ./drivers/keyboard.c -o keyboard.o
-	nasm -f elf32 ./kernel/kernel_head.asm -o kernel_head.o
-	ld -m elf_i386 -T link.ld -o kernel.elf kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o
-	ld -m elf_i386 -T link.ld -o kernel.bin kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o --oformat binary
-	#cat bootloader.bin kernel.bin > ./nobotro_os.img
-	#truncate -s 10240 nobotro_os.img
-	dd if=/dev/zero of=nobotro_os.img bs=512 count=2880
-	mkfs.fat -F 12 -n "NOBOTRO" nobotro_os.img
-	dd if=bootloader.bin of=nobotro_os.img conv=notrunc
-	mcopy -i nobotro_os.img kernel.bin "::kernel.bin"
-	rm *.bin *.o
+C_SRC := $(wildcard */*.c)
+C_OBJ := $(addprefix $(BUILD_DIR)/, $(notdir $(C_SRC:.c=.o)))
 
-debug: ../nobotro_os.img
-	qemu-system-x86_64 ../nobotro_os.img -s -S
+BOOTLOADER_ASM := boot/bootloader.asm
+KERNELHEAD_ASM := kernel/kernel_head.asm
+
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/%.o: */%.c $(BUILD_DIR)
+	gcc $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/kernel_head.o: $(KERNELHEAD_ASM) $(BUILD_DIR)
+	nasm -f elf32 $< -o $@
+
+$(BUILD_DIR)/bootloader.bin: $(BOOTLOADER_ASM) $(BUILD_DIR)
+	nasm -f bin $< -o $@
+
+$(BUILD_DIR)/kernel.bin: $(C_OBJ) $(BUILD_DIR)/kernel_head.o
+	ld -m elf_i386 -T link.ld -o $@ $(BUILD_DIR)/kernel_head.o $(C_OBJ) --oformat binary 
+
+image: $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
+	dd if=/dev/zero of=$(IMAGE) bs=512 count=2880
+	mkfs.fat -F 12 -n "NOBOTRO" $(IMAGE)
+	dd if=$(BUILD_DIR)/bootloader.bin of=$(IMAGE) conv=notrunc
+	mcopy -i $(IMAGE) $(BUILD_DIR)/kernel.bin "::kernel.bin"
+
+clean:
+	rm -rf $(BUILD_DIR)
+
+all: image clean
+
+debug: $(IMAGE)
+	qemu-system-x86_64 $(IMAGE) -s -S
 
 
 flash:
 	dd if=/dev/zero bs=512 count=200 of=/dev/sdb
-	dd if=../nobotro_os.img of=/dev/sdb
+	dd if=$(IMAGE) of=/dev/sdb
 
 emu:
-	qemu-system-x86_64 ./nobotro_os.img
+	qemu-system-x86_64 $(IMAGE)
