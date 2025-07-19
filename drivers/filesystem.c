@@ -1,12 +1,10 @@
 #include "filesystem.h"
 #include "disk.h"
-void readFstat(struct BootSector* bs) {
-    int size = bs->SectorsPerFAT * bs->NumberOfFATs;
-    unsigned char buffer[size];
 
-    read28pio(buffer,1,size,0);
-
-    
+void readRoot(struct BootSector* bs, char* buffer) {
+    const int root_lba = bs->ReservedSectors + bs->SectorsPerFAT*bs->NumberOfFATs;
+    const int root_size = (bs->RootEntries*32 + bs->BytesPerSector - 1)/bs->BytesPerSector;
+    read28pio((void*)buffer, root_lba, root_size, 0);
 }
 
 unsigned short readNextCluster(struct BootSector* bs, int active_cluster) {
@@ -17,7 +15,7 @@ unsigned short readNextCluster(struct BootSector* bs, int active_cluster) {
     unsigned int fat_sector = first_fat_sector + (fat_offset / sector_size);
     unsigned int ent_offset = fat_offset % sector_size;
 
-    read28pio(FAT_table,fat_sector,2,0);
+    read28pio((void*)FAT_table,fat_sector,2,0);
     // unsigned char buffer8[sector_size * 2];
     // for (int i = 0; i < sector_size; ++i) {
     //     buffer8[i * 2]     = FAT_table[i] & 0xFF;         // LSB

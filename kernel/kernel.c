@@ -54,26 +54,33 @@ char *calc =
 
 void startcalc();
 
-void main()
+void root_ls(struct BootSector*);
+
+int main()
 {
 
 	clear_screen();
+
 	unsigned char buffer[512];
-	read28pio(buffer,0,1,0);
+	read28pio((void*)buffer,0,1,0);
 	struct BootSector* bs = (struct BootSector*) (buffer+3);
 
-	unsigned char buffer2[512];
-	read28pio(buffer2,1,1,0);
-	unsigned short cluster = sector2cluster(bs,33);
-	while(cluster < 0xFF8) {
-		int lol = cluster2sector(bs,cluster);
-		cluster = readNextCluster(bs,cluster);
-	}
+	//unsigned char buffer2[512];
+	//read28pio((void*)buffer2,1,1,0);
+	//unsigned short cluster = sector2cluster(bs,33);
+	//while(cluster < 0xFF8) {
+	//	int lol = cluster2sector(bs,cluster);
+	//	cluster = readNextCluster(bs,cluster);
+	//}
 	while (1)
 	{
 		char buf[20];
 		scan(buf, 10);
-		if (strcmp(buf, "whoami") == 0)
+        if (strcmp(buf, "ls") == 0)
+        {
+            root_ls(bs);
+        }
+		else if (strcmp(buf, "whoami") == 0)
 		{
 			printtext(whoami, 0x0a, '#');
 		}
@@ -96,6 +103,26 @@ void main()
 			printtext("unknown command\n", 0x04, 0);
 	}
 }
+
+void root_ls(struct BootSector* bs) {
+	int file_entry_size = sizeof(struct File);
+	char buffer[file_entry_size*bs->RootEntries];
+	readRoot(bs, buffer);
+
+    struct File *file = (struct File*)buffer;
+    
+
+    for (int i = 0; i < bs->RootEntries; i++) {
+		if (file[i].bytes[0]) {
+			char name[13];
+			name[11] = '\n';
+			name[12] = 0;
+			bufcpy(name, (char*)file[i].bytes, 11);
+			printtext(name, 0x04, 0);
+		}
+    }
+}
+
 void startcalc()
 {
 	printtext(calc, 0x0a, '#');

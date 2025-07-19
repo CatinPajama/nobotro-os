@@ -48,6 +48,13 @@ void itoa(int n, char s[])
      reverse(s);
  }
 
+void bufcpy(char* buf_to,char* buf_from, int n)
+{
+    for (int i = 0; i < n; i++) {
+        buf_to[i] = buf_from[i];
+    }
+
+}
 
 void sleep(int milisecond)
 {

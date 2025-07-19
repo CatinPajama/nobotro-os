@@ -5,6 +5,7 @@ struct __attribute__((packed)) File {
     unsigned char creation100thOfSecond;
     unsigned short creation;
     unsigned short creationDate;
+    unsigned short highcluster;
     unsigned short lastAccessed;
     unsigned short lastModification;
     unsigned short lastModificationDate;
@@ -37,3 +38,4 @@ struct __attribute__((packed)) BootSector{
 unsigned short readNextCluster(struct BootSector* bs, int active_cluster);
 unsigned sector2cluster(struct BootSector* bs, unsigned int sector_number);
 unsigned int cluster2sector(struct BootSector* bs, unsigned int cluster);
+void readRoot(struct BootSector *bs, char* buffer);
