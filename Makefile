@@ -13,8 +13,12 @@ all:
 	nasm -f elf32 ./kernel/kernel_head.asm -o kernel_head.o
 	ld -m elf_i386 -T link.ld -o kernel.elf kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o
 	ld -m elf_i386 -T link.ld -o kernel.bin kernel_head.o kernel.o stdlib.o stdio.o string.o video.o keyboard.o port.o disk.o --oformat binary
-	cat bootloader.bin kernel.bin > ./nobotro_os.img
-	truncate -s 10240 nobotro_os.img
+	#cat bootloader.bin kernel.bin > ./nobotro_os.img
+	#truncate -s 10240 nobotro_os.img
+	dd if=/dev/zero of=nobotro_os.img bs=512 count=2880
+	mkfs.fat -F 12 -n "NOBOTRO" nobotro_os.img
+	dd if=bootloader.bin of=nobotro_os.img conv=notrunc
+	mcopy -i nobotro_os.img kernel.bin "::kernel.bin"
 	rm *.bin *.o
 
 debug: ../nobotro_os.img
