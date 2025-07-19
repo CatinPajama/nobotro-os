@@ -22,6 +22,7 @@ $(BUILD_DIR)/bootloader.bin: $(BOOTLOADER_ASM) $(BUILD_DIR)
 	nasm -f bin $< -o $@
 
 $(BUILD_DIR)/kernel.bin: $(C_OBJ) $(BUILD_DIR)/kernel_head.o
+	ld -m elf_i386 -T link.ld -o $(BUILD_DIR)/kernel.elf $(BUILD_DIR)/kernel_head.o $(C_OBJ)
 	ld -m elf_i386 -T link.ld -o $@ $(BUILD_DIR)/kernel_head.o $(C_OBJ) --oformat binary 
 
 image: $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin

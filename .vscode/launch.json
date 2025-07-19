@@ -5,7 +5,7 @@
             "name": "Debug OS",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/kernel.elf",
+            "program": "${workspaceFolder}/build/kernel.elf",
             "cwd": "${workspaceFolder}",
             "miDebuggerPath": "gdb",
             "miDebuggerServerAddress": "localhost:1234",
