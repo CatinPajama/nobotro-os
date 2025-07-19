@@ -1,15 +1,16 @@
 struct __attribute__((packed)) File {
-    unsigned char bytes[11];
+    unsigned char fileName[8];
+    unsigned char ext[3];
     unsigned char attribute;
     unsigned char reserved_;
     unsigned char creation100thOfSecond;
     unsigned short creation;
     unsigned short creationDate;
-    unsigned short highcluster;
     unsigned short lastAccessed;
+    unsigned short upperCluster;
     unsigned short lastModification;
     unsigned short lastModificationDate;
-    unsigned short cluster;
+    unsigned short lowCluster;
     int size; 
 };
 
@@ -38,4 +39,5 @@ struct __attribute__((packed)) BootSector{
 unsigned short readNextCluster(struct BootSector* bs, int active_cluster);
 unsigned sector2cluster(struct BootSector* bs, unsigned int sector_number);
 unsigned int cluster2sector(struct BootSector* bs, unsigned int cluster);
-void readRoot(struct BootSector *bs, char* buffer);
+void lsAll(struct BootSector* bs);
+void visit(struct BootSector *bs,unsigned short cluster, int);
