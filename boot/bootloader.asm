@@ -296,7 +296,87 @@ load_gdt_and_kernel:
      
     jmp $
 
+<<<<<<< HEAD
 ; Global descriptor table for 32-bit protected mode
+=======
+;load kernel to memory
+read_sector:
+pusha
+mov ax, 0x0
+mov es, ax      ; ES = 0
+mov bx, 0x1000  ; BX = 0x1000. ES:BX=0x0:0x1000 
+                ; ES:BX = starting address to read sector(s) into
+mov ah, 02      ; Int 13h/AH=2 = Read Sectors From Drive
+mov al, 15   ; Sectors to read = 15
+mov ch, 00      ; CH=Cylinder. Second sector of disk
+                ; is at Cylinder 0 not 1
+mov cl, 02      ; Sector to read = 2
+mov dh, 00      ; Head to read = 0
+                ; DL hasn't been destroyed by our bootloader code and still
+                ;     contains boot drive # passed to our bootloader by the BIOS
+int 13h
+popa
+
+cli
+
+
+ 
+
+xor ax,ax
+mov ds, ax 
+  
+lgdt [gdt_descriptor]
+
+ 
+  
+ mov eax , cr0
+or eax , 0x1
+
+mov cr0 , eax
+
+
+
+jmp gdt_codeSeg:init_pm
+
+
+
+[bits 32]
+
+ 
+init_pm:
+ 
+MOV AX, gdt_dataSeg                     ; Update segments for protected mode as defined in GDT
+MOV DS, AX
+MOV SS, AX
+MOV ES, AX
+; MOV FS, AX
+; MOV GS, AX
+
+MOV EBP, 0x9000                       ; Set stack base at top of free space
+MOV ESP, EBP 
+
+
+
+call 0x1000;jump to kernel head
+ 
+jmp $
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ ; Global descriptor table for 32-bit protected mode
+>>>>>>> origin/master
 gdt_start:                              ; Start of global descriptor table
     gdt_null:                           ; Null descriptor chunk
         dd 0x00
@@ -324,6 +404,7 @@ gdt_codeSeg equ gdt_code - gdt_start    ; Offset of code segment from start
 gdt_dataSeg equ gdt_data - gdt_start    ; Offset of data segment from start
 
 
+<<<<<<< HEAD
 root_LBA:               dw 0
 root_size:              dw 0
 kernel_filename:        db 'KERNEL  BIN'
@@ -346,3 +427,7 @@ dw 0xaa55
 
 ; We can use this buffer after our 512 byte bootloader code
 buffer:
+=======
+times 510 -( $ - $$ ) db 0 
+dw 0xaa55
+>>>>>>> origin/master
