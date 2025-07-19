@@ -35,6 +35,7 @@ void read28pio(unsigned short *buffer, unsigned int LBA, unsigned char sectorCou
     for(int i = 0; i < sectorCount; i++) {
         wait();
         insw(0x1f0,buffer,256);
+        buffer += 256;
     }
 }
 
@@ -66,6 +67,7 @@ void write28pio(unsigned short *buffer, unsigned int LBA, unsigned char sectorCo
     for (volatile int k = 0; k < 1000; ++k); 
 
 }
+
 /*
     Send 0xE0 for the "master" or 0xF0 for the "slave", ORed with the highest 4 bits of the LBA to port 0x1F6:
     Send a NULL byte to port 0x1F1, if you like (it is ignored and wastes lots of CPU time): 

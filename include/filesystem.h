@@ -34,3 +34,6 @@ struct __attribute__((packed)) BootSector{
     unsigned char  VolumeLabel[11];
     unsigned char  FileSystem[8];
 } ;
+unsigned short readNextCluster(struct BootSector* bs, int active_cluster);
+unsigned sector2cluster(struct BootSector* bs, unsigned int sector_number);
+unsigned int cluster2sector(struct BootSector* bs, unsigned int cluster);

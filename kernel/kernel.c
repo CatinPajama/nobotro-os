@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "keyboard.h"
 #include "disk.h"
+#include "filesystem.h"
 
 char *whoami =
 	"  .     .  :     .    .. :. .___---------___.\n"
@@ -57,11 +58,17 @@ void main()
 {
 
 	clear_screen();
-	unsigned short buffer1[256],buffer2[256];
-	buffer1[0] = 'h';
-	buffer1[1] = 'i';
-	write28pio(buffer1,18,1,0);
-	read28pio(buffer2,18,1,0);
+	unsigned char buffer[512];
+	read28pio(buffer,0,1,0);
+	struct BootSector* bs = (struct BootSector*) (buffer+3);
+
+	unsigned char buffer2[512];
+	read28pio(buffer2,1,1,0);
+	unsigned short cluster = sector2cluster(bs,33);
+	while(cluster < 0xFF8) {
+		int lol = cluster2sector(bs,cluster);
+		cluster = readNextCluster(bs,cluster);
+	}
 	while (1)
 	{
 		char buf[20];
