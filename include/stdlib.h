@@ -6,4 +6,5 @@ int rand(int,int);
  
 int atoi(char *string);
 void itoa(char *buf,int val);
-#endif  
+void bufcpy(char* buf_to, char* buf_from, int n);
+#endif 

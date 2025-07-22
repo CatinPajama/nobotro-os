@@ -1,6 +1,7 @@
 #ifndef _VIDEO_H
 #define _VIDEO_H
 
+void clear_screen();
 int get_cursor_pos();
 void printtext(char*,char,char);
 void printchar(char,char,char);

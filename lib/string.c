@@ -37,6 +37,7 @@ int strcmp(char *str1,char *str2)
 	return 0;
 }
 
+
 void strcpy(char* buf_to,char* buf_from)
 {
 
@@ -45,10 +46,8 @@ void strcpy(char* buf_to,char* buf_from)
 	{
 		*buf_to++ =a;
 	}
-
-
-
 }
+
 
 void reverse(char s[])
  {
