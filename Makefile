@@ -30,6 +30,7 @@ image: $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/kernel.bin
 	mkfs.fat -F 12 -n "NOBOTRO" $(IMAGE)
 	dd if=$(BUILD_DIR)/bootloader.bin of=$(IMAGE) conv=notrunc
 	mcopy -i $(IMAGE) $(BUILD_DIR)/kernel.bin "::kernel.bin"
+	# mcopy -s -i $(IMAGE) ./foo "::foo" 
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -45,4 +46,4 @@ flash:
 	dd if=$(IMAGE) of=/dev/sdb
 
 emu:
-	qemu-system-x86_64 $(IMAGE)
+	qemu-system-x86_64 $(IMAGE) 

@@ -3,6 +3,7 @@
 
 int strlen(char *str);
 void reverse(char *s);
-int strcmp(char *str1,char *str2);
-void strcpy(char* buf_to,char* buf_from);
-#endif  
+int strcmp(char *str1, char *str2);
+void strcpy(char *buf_to, char *buf_from);
+char *strtok(char *str, char delim);
+#endif

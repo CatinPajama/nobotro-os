@@ -54,22 +54,28 @@ char *calc =
 
 void startcalc();
 
-
 int main()
 {
 
 	clear_screen();
 
 	unsigned char buffer[512];
-	read28pio((void*)buffer,0,1,0);
-	struct BootSector* bs = (struct BootSector*) (buffer+3);
+	read28pio((void *)buffer, 0, 1, 0);
+	struct BootSector *bs = (struct BootSector *)(buffer + 3);
 
 	while (1)
 	{
 		char buf[20];
 		scan(buf, 10);
-		if (strcmp(buf,"ls") == 0) {
+		if (strcmp(buf, "ls") == 0)
+		{
 			lsAll(bs);
+		}
+		else if (strcmp(buf, "cat") == 0)
+		{
+			char path[20];
+			scan(path, 20);
+			readFile(bs, path);
 		}
 		else if (strcmp(buf, "whoami") == 0)
 		{
